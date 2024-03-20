@@ -5,16 +5,14 @@
 #include <app/util.hh>
 
 namespace app {
-    namespace {
-        using consolidated_program_arguments = std::vector<std::string_view>;
-    };
-
     class app final {
+        using consolidated_program_arguments = const std::vector<std::string_view>;
+
         private:
-            consolidated_program_arguments launch_arguments;
+            const consolidated_program_arguments launch_arguments;
 
         public:
             app(program_arguments&& arguments);
-            auto hello_world() -> void;
+            auto run() -> void;
     };
 }
