@@ -1,6 +1,6 @@
 project('project_name_here', 'cpp',
   version : '0.1',
-  default_options : ['warning_level=3', 'cpp_std=c++23']
+  default_options : ['warning_level=everything', 'cpp_std=c++23']
 )
 
 add_project_link_arguments('-lstdc++exp', '-lstdc++exp', language: 'cpp')
