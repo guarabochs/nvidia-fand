@@ -3,8 +3,7 @@
 
 #include <string>
 #include <ranges>
-#include <iostream>
-#include <cstdio>
+#include <print>
 
 namespace app {
     app::app(const program_arguments&& args) : launch_arguments { std::move(args) } {
@@ -13,12 +12,13 @@ namespace app {
 
     auto app::run() -> void {
         // program execution
-        fmt::println("hi.");
+        std::println("hi.");
 
         auto concat_args = launch_arguments
-            | std::views::join_with(std::string { ", " });
+            | std::views::join_with(std::string { ", " })
+            | std::ranges::to<std::string>();
 
-        fmt::println("{}", std::string { concat_args.cbegin(), concat_args.cend() });
+        std::println("{}", concat_args);
 
         // error handling
         auto err = error_from_std_exception(std::runtime_error { "ouch my leg" });

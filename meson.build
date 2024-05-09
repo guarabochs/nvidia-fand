@@ -1,12 +1,13 @@
-project('boiler', 'cpp',
+project('project_name_here', 'cpp',
   version : '0.1',
   default_options : ['warning_level=3', 'cpp_std=c++23']
 )
 
-add_project_link_arguments('-lstdc++_libbacktrace', '-lstdc++exp', language: 'cpp')
+add_project_link_arguments('-lstdc++exp', '-lstdc++exp', language: 'cpp')
 
 app_deps = [
-  dependency('fmt'),
+  # app dependencies
+  # <print> got implemented on GCC 14 so fmt is out
 ]
 
 app_includes = [
@@ -28,6 +29,7 @@ exe = executable(
   'app',
   'src/main.cc',
   include_directories: [app_includes],
+  dependencies: [app_deps],
   install: true,
   link_with: [app]
 )

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <fmt/std.h>
-
 #include <app/util.hh>
 
 namespace app {
