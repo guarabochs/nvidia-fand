@@ -1,10 +1,8 @@
 # nvidia-fand
-===
 
 "fan curve" thing i hacked up.
 
 ## usage
-===
 
 i have made this for my own system and i have no plans nor the time to do
 anything beyond this at the moment. given that, do know that
