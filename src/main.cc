@@ -7,7 +7,7 @@
 
 #include <cxxabi.h>
 
-auto global_exception_handler() -> void {
+[[noreturn]] auto global_exception_handler() -> void {
     // Emergency version of app::util::scream_and_abort
     const auto stacktrace = std::stacktrace::current(1);
     const auto current_exception = std::current_exception();
