@@ -75,8 +75,7 @@ namespace app {
 
             // ...
             std::optional<nvmlDevice_t> nvml_device;
-            std::thread _fan_control_thread;
-            std::atomic<bool> _fan_control_thread_running;
+            std::atomic<bool> fan_control_thread_running;
 
         public:
             explicit app(program_arguments&& arguments);

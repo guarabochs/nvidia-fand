@@ -15,10 +15,7 @@ namespace app {
         nvml_call(nvmlInit_v2);
         
         nvmlDevice_t dev;
-        nvml_call(nvmlDeviceGetHandleByIndex_v2,
-            static_cast<unsigned int>(0),
-            &dev
-        );
+        nvml_call(nvmlDeviceGetHandleByIndex_v2, 0u, &dev);
 
         this->nvml_device.emplace(dev);
 
@@ -30,21 +27,19 @@ namespace app {
     }
 
     auto app::run() -> void {
-        _fan_control_thread_running = true;
+        fan_control_thread_running = true;
         fan_control_thread_loop();
     }
 
     app::~app() {
-        _fan_control_thread_running = false;
-        if (_fan_control_thread.joinable())
-            _fan_control_thread.join();
+        fan_control_thread_running = false;
 
         nvml_call(nvmlDeviceSetDefaultFanSpeed_v2, nvml_device.value(), 0);
         nvml_call(nvmlShutdown);
     }
 
     auto app::fan_control_thread_loop() -> void {
-        while (_fan_control_thread_running) {
+        while (fan_control_thread_running) {
             unsigned int temperature_reading {};
             unsigned int fan_speed_reading {};
 
@@ -61,7 +56,7 @@ namespace app {
                     const bool towards_right = temperature_reading > towards;
 
                     unsigned int next_fan_speed =
-                        std::max(min_gpu_fan_percent, std::min(towards_right ? right.fan_speed_pct : left.fan_speed_pct, 100u));
+                        std::clamp(min_gpu_fan_percent, towards_right ? right.fan_speed_pct : left.fan_speed_pct, 100u);
 
                     if (towards > 100) {
                         std::println("! erroneous division detected; falling back towards right");
@@ -79,8 +74,7 @@ namespace app {
 
                     nvml_call(nvmlDeviceSetFanSpeed_v2,
                         nvml_device.value(),
-                        0,
-                        std::max(min_gpu_fan_percent, std::min(next_fan_speed, 100u))
+                        0, std::clamp(min_gpu_fan_percent, next_fan_speed, 100u)
                     );
 
                     suitable_temperature_range_found = true;
@@ -95,7 +89,7 @@ namespace app {
                     std::round(static_cast<double>(temperature_reading) / 10.0) * 10;
 
                 unsigned int next_fan_speed_uint =
-                    std::min(min_gpu_fan_percent, std::max(static_cast<unsigned int>(next_fan_speed_dbl), 100u));
+                    std::clamp(min_gpu_fan_percent, static_cast<unsigned int>(next_fan_speed_dbl), 100u);
 
                 nvml_call(nvmlDeviceSetFanSpeed_v2,
                     nvml_device.value(), 0, next_fan_speed_uint
