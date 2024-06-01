@@ -56,7 +56,7 @@ namespace app {
                     const bool towards_right = temperature_reading > towards;
 
                     unsigned int next_fan_speed =
-                        std::clamp(min_gpu_fan_percent, towards_right ? right.fan_speed_pct : left.fan_speed_pct, 100u);
+                        std::clamp(towards_right ? right.fan_speed_pct : left.fan_speed_pct, min_gpu_fan_percent, 100u);
 
                     if (towards > 100) {
                         std::println("! erroneous division detected; falling back towards right");
@@ -74,7 +74,7 @@ namespace app {
 
                     nvml_call(nvmlDeviceSetFanSpeed_v2,
                         nvml_device.value(),
-                        0, std::clamp(min_gpu_fan_percent, next_fan_speed, 100u)
+                        0, std::clamp(next_fan_speed, min_gpu_fan_percent, 100u)
                     );
 
                     suitable_temperature_range_found = true;
@@ -85,11 +85,11 @@ namespace app {
             if (!suitable_temperature_range_found) {
                 std::println("! no suitable temperature range found, falling back to temp/10 quantized");
 
-                double next_fan_speed_dbl = 
+                const double next_fan_speed_dbl = 
                     std::round(static_cast<double>(temperature_reading) / 10.0) * 10;
 
-                unsigned int next_fan_speed_uint =
-                    std::clamp(min_gpu_fan_percent, static_cast<unsigned int>(next_fan_speed_dbl), 100u);
+                const unsigned int next_fan_speed_uint =
+                    std::clamp(static_cast<unsigned int>(next_fan_speed_dbl), min_gpu_fan_percent, 100u);
 
                 nvml_call(nvmlDeviceSetFanSpeed_v2,
                     nvml_device.value(), 0, next_fan_speed_uint
