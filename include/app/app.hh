@@ -1,10 +1,5 @@
 #pragma once
 
-#include <thread>
-#include <atomic>
-#include <concepts>
-#include <array>
-
 #include <app/util.hh>
 
 #include <nvml.h>
@@ -16,7 +11,7 @@ namespace app {
     };
 
     template<typename ReturnType = nvmlReturn_t, typename... Args>
-    auto nvml_call(auto call, Args... args) -> nvmlReturn_t  {
+    auto nvml_call(auto call, Args... args) -> nvmlReturn_t {
         const nvmlReturn_t ret = call(args...);
 
         if (ret != NVML_SUCCESS) {
@@ -53,6 +48,8 @@ namespace app {
                     case 28:  return "No GPUs were found.";
                     case 29:  return "Resource not in correct state to perform requested operation.";
                     case 999: return "An internal driver error occurred";
+                    default:
+                        break;
                 }
 
                 return "Unknown error.";
@@ -75,7 +72,6 @@ namespace app {
 
             // ...
             std::optional<nvmlDevice_t> nvml_device;
-            std::atomic<bool> fan_control_thread_running;
 
         public:
             explicit app(program_arguments&& arguments);
@@ -86,6 +82,6 @@ namespace app {
 
         private:
             // class private functions
-            auto fan_control_thread_loop() -> void;
+            auto fan_control_loop() -> void;
     };
 }

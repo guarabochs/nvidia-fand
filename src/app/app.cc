@@ -3,7 +3,6 @@
 #include <app/fan_settings.hh>
 
 #include <thread>
-#include <atomic>
 #include <ranges>
 #include <memory>
 #include <print>
@@ -27,19 +26,20 @@ namespace app {
     }
 
     auto app::run() -> void {
-        fan_control_thread_running = true;
-        fan_control_thread_loop();
+        /*
+         * i couldn't get nvml to work on another thread
+         * not that it's needed here anyway
+         */
+        fan_control_loop();
     }
 
     app::~app() {
-        fan_control_thread_running = false;
-
         nvml_call(nvmlDeviceSetDefaultFanSpeed_v2, nvml_device.value(), 0);
         nvml_call(nvmlShutdown);
     }
 
-    auto app::fan_control_thread_loop() -> void {
-        while (fan_control_thread_running) {
+    auto app::fan_control_loop() -> void {
+        while (true) {
             unsigned int temperature_reading {};
             unsigned int fan_speed_reading {};
 
